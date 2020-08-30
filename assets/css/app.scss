@@ -1,0 +1,70 @@
+body {
+    background-color: white;
+    font-family: sans-serif;
+}
+footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #ccc;
+    color: black;
+    text-align: center;
+    padding: 5px 0;
+}
+@media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    .container{
+        margin: 0px;
+    }
+}
+@media only screen and (min-width: 768px) {
+    /* For desktop: */
+    .container{
+        margin: 0 15%;
+    }
+}
+@media only screen and (min-width: 600px) {
+    /* For tablets: */
+    .container{
+        margin: 0 5%;
+    }
+}
+.filter__fieldset{
+    box-shadow: rgb(0, 0, 0) 6px 6px 24px -8px;
+    display: flex;
+    border-radius: 10px;
+    border: black solid 2px;
+    padding: 15px;
+    font-weight: bold;
+}
+.form__input-div{
+    display: flex;
+    flex: 1;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+.form__inputs{
+    justify-content: space-between;
+    display: flex;
+}
+.form__input-label{
+    padding-right: 15px;;
+}
+.form__input-input{
+    flex: 1;
+}
+.form__select{
+    width: 100%;
+}
+.form__select--outlined, .from__input--outlined{
+    width: 100%;
+    border: 2px solid;
+    border-radius: 5px;
+    padding: 5px 5px;
+}
+.dashboard__title{
+    text-align: center;
+    padding: 50px;
+}
