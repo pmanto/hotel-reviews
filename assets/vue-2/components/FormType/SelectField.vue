@@ -1,7 +1,12 @@
 <template>
   <div class="form__input-div">
-    <select :id="id" class="form__select select form__select--outlined">
-      <option class="select__placeholder" value="" disabled selected>{{label}}</option>
+    <select
+      :id="id"
+      class="form__select select form__select--outlined"
+      v-model="fieldValue"
+      v-on:change="onChange(fieldValue)"
+    >
+      <option class="select__placeholder" value="0" disabled selected>{{label}}</option>
       <option
         class="select__option"
         v-for="choice in choices"
@@ -18,6 +23,12 @@ export default {
     choices: Object,
     label: String,
     id: String,
+    onChange: Function,
+  },
+  data: function () {
+    return {
+      fieldValue: "0",
+    };
   },
 };
 </script>

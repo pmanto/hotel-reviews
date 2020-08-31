@@ -17,4 +17,9 @@ class ReviewOvertimeOutput
      * @var string
      */
     public $dateGroup;
+
+    /**
+     * @var string
+     */
+    public $period;
 }

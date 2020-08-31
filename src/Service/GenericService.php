@@ -26,8 +26,33 @@ class GenericService
      * @return DateTime                 
      */
     function addDays(DateTime $dateTime, int $days)
-    {   
+    {
         $dateTimeClone = clone $dateTime;
-        return $dateTimeClone->add(new DateInterval('P'.$days.'D'));
+        return $dateTimeClone->add(new DateInterval('P' . $days . 'D'));
+    }
+
+    /**
+     * get date from week
+     * @param int $year             year
+     * @param int $week             week of the year
+     * @return string               month year fromatted
+     */
+    function getDateFromWeek(int $year, int $week)
+    {
+        $weekStart = new DateTime();
+        $weekStart->setISODate($year, $week);
+        return $weekStart->format('Y-m');
+    }
+
+    /**
+     * get date from month
+     * @param int $year                 year
+     * @param int $month                month of the year
+     * @return string                   month year formatted
+     */
+    function getDateFromMonth(int $year, int $month)
+    {
+        $monthStart = new DateTime();
+        return $monthStart->setDate($year, $month, 1)->format('Y-m');
     }
 }

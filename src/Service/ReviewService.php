@@ -91,7 +91,7 @@ class ReviewService
                     $break = true;
                 }
             } else {
-                $toLimit = null;
+                $toLimit = $toDate;
             }
 
             $result = $this->reviewRepository
@@ -121,14 +121,19 @@ class ReviewService
             isset($values['sumScore']) && isset($values['reviewCount'])
             && $values['reviewCount'] > 0
         ) {
-            $reviewOvertimeOutput->averageScore = $values['sumScore'] / $values['reviewCount'];
+            $reviewOvertimeOutput->averageScore = round($values['sumScore'] / $values['reviewCount'], 1);
             $reviewOvertimeOutput->reviewCount = $values['reviewCount'];
         }
-
+        
         $reviewOvertimeOutput->dateGroup = isset($values['datePeriod']) ?
             $values['datePeriod'] : (isset($values['weekPeriod']) ?
-                $values['weekPeriod'] . ' ' . $values['yearPeriod'] : (isset($values['monthPeriod']) ?
-                    $values['monthPeriod'] . '-' . $values['yearPeriod'] : ''));
+                $values['weekPeriod'] : (isset($values['monthPeriod']) ?
+                    $values['yearPeriod'] . '-' . $values['monthPeriod'] : ''));
+
+        $reviewOvertimeOutput->period =  isset($values['datePeriod']) ?
+            (new DateTime($values['datePeriod']))->format('Y-m') : (isset($values['weekPeriod']) ?
+                $this->genericService->getDateFromWeek($values['yearPeriod'], $values['weekPeriod']) :
+                $this->genericService->getDateFromMonth($values['yearPeriod'], $values['monthPeriod']));
     }
 
     /**

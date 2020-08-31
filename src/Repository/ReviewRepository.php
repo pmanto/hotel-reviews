@@ -24,21 +24,21 @@ class ReviewRepository extends ServiceEntityRepository
      * get by hotel id and date range
      * @param int $hotelId              hotel id
      * @param DateTime $fromDate        from date object
-     * @param ?DateTime $toDate          to date object
+     * @param DateTime $toDate          to date object
      * @param string $groupBy           group by (DAY, MONTH, YEAR)
      * @return array                    reviews array
      */
     public function getByHotelIdAndDateRange(
         int $hotelId,
         DateTime $fromDate,
-        ?DateTime $toDate,
+        DateTime $toDate,
         string $groupBy
     ) {
         switch ($groupBy) {
             case 'DATE':
                 $select = ', ' . $groupBy . '(r.createdDate) as datePeriod ';
                 $groupByColumns = ['datePeriod'];
-                
+                break;
             case 'WEEK':
                 $select = ', ' . $groupBy . '(r.createdDate, 3) as weekPeriod, ' .
                     'YEAR(r.createdDate) as yearPeriod';
@@ -58,7 +58,7 @@ class ReviewRepository extends ServiceEntityRepository
             ->select('count(r.id) as reviewCount, sum(r.score) as sumScore' . $select)
             ->andWhere('r.hotel = :hotelId')
             ->andWhere('r.createdDate >= :fromDate')
-            ->andWhere(':toDate is null or r.createdDate <= :toDate')
+            ->andWhere('r.createdDate <= :toDate')
             ->setParameter('hotelId', $hotelId)
             ->setParameter('fromDate', $fromDate)
             ->setParameter('toDate', $toDate);
@@ -66,6 +66,7 @@ class ReviewRepository extends ServiceEntityRepository
         if ($groupByColumns) {
             foreach ($groupByColumns as $col) {
                 $query->addGroupBy($col);
+                $query->addOrderBy($col);
             }
         }
 
