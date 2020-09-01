@@ -16,19 +16,14 @@
     </select>
   </div>
 </template>
-<script>
-export default {
-  name: "SelectField",
-  props: {
-    choices: Object,
-    label: String,
-    id: String,
-    onChange: Function,
-  },
-  data: function () {
-    return {
-      fieldValue: "0",
-    };
-  },
-};
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
+@Component
+export default class SelectField extends Vue {
+  @Prop(Object) readonly choices!: object;
+  @Prop(String) readonly label!: string;
+  @Prop(String) readonly id!: string;
+  @Prop(Function) readonly onChange!: Function;
+  private fieldValue: string = "0";
+}
 </script>

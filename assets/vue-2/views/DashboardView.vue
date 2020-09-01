@@ -6,14 +6,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import FilterSection from "../components/FilterSection";
 import ReviewChart from "../components/Chart/ReviewChart";
-export default {
-  name: "DashboardView",
+import { Component, Vue } from "vue-property-decorator";
+@Component({
   components: {
     FilterSection,
     ReviewChart,
-  }
-};
+  },
+})
+export default class DashboardView extends Vue {}
 </script>

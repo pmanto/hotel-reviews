@@ -14,81 +14,74 @@
       <div class="tooltip__container" v-if="tooltipData">
         <strong>{{labels.xLabels[tooltipData.index]}}</strong>
         <div class="tooltip__data">
-          <div class="tooltip__item">Score: {{tooltipData.data[0]["value"]}}</div>          
-          <div class="tooltip__item">Review count: {{tooltipData.data[0]["reviewCount"]}}</div>          
+          <div class="tooltip__item">Score: {{tooltipData.data[0]["value"]}}</div>
+          <div class="tooltip__item">Review count: {{tooltipData.data[0]["reviewCount"]}}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script>
-import TrendChart from "vue-trend-chart";
+<script lang="ts">
 import Popper from "popper.js";
-Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
-export default {
-  name: "LineChart",
-  props: {
-    values: Array,
-    xLabels: Array,
-    yLabels: Number,
-  },
-  data: function () {
-    return {
-      grid: {
-        verticalLines: true,
-        horizontalLines: true,
-        verticalLinesNumber: 1,
-        horizontalLinesNumber: 1
+import { Component, Prop, Vue } from "vue-property-decorator";
+const TrendChart = require("vue-trend-chart");
+Vue.use(TrendChart);
+@Component({components:{TrendChart}})
+export default class LineChart extends Vue {
+  @Prop(Array) readonly values!: Array<object>;
+  @Prop(Array) readonly xLabels!: Array<string>;
+  @Prop(Number) readonly yLabels!: number;
+  private grid: object = {
+    verticalLines: true,
+    horizontalLines: true,
+    verticalLinesNumber: 1,
+    horizontalLinesNumber: 1,
+  };
+  private tooltipData!: object;
+  private popper?: Popper = undefined;
+  private popperIsActive: boolean = false;
+  get datasets(): Array<object> {
+    return [
+      {
+        data: this.values,
+        smooth: true,
+        showPoints: true,
       },
-      tooltipData: null,
-      popper: null,
-      popperIsActive: false,
+    ];
+  }
+  get labels(): object {
+    return {
+      xLabels: this.xLabels,
+      yLabels: this.yLabels,
     };
-  },
-  computed: {
-    datasets() {
-      return [
-        {
-          data: this.values,
-          smooth: true,
-          showPoints: true
-        },
-      ];
-    },
-    labels() {
-      return {
-        xLabels: this.xLabels,
-        yLabels: this.yLabels,
-        yLabelsTextFormatter: (val) => Math.round(val),
-      };
-    },
-  },
-  methods: {
-    initPopper() {
-      const chart = document.querySelector(".line-chart");
+  }
+  public initPopper(): void {
+    const chart = document.querySelector(".line-chart");
+    if (chart) {
       const ref = chart.querySelector(".active-line");
-      const tooltip = this.$refs.tooltip;
-      this.popper = new Popper(ref, tooltip, {
-        placement: "right",
-        modifiers: {
-          offset: { offset: "0,10" },
-          preventOverflow: {
-            boundariesElement: chart,
+      const tooltip:any = this.$refs.tooltip;
+      if (ref) {
+        this.popper = new Popper(ref, tooltip, {
+          placement: "right",
+          modifiers: {
+            offset: { offset: "0,10" },
+            preventOverflow: {
+              boundariesElement: chart,
+            },
           },
-        },
-      });
-    },
-    onMouseMove(params) {
-      this.popperIsActive = !!params;
+        });
+      }
+    }
+  }
+  public onMouseMove(params: object): void {
+    this.popperIsActive = !!params;
+    if (this.popper !== undefined) {
       this.popper.scheduleUpdate();
-      this.tooltipData = params || null;
-    },
-  },
-  components: {
-    TrendChart,
-  },
+    }
+    this.tooltipData = params || null;
+  }
   mounted() {
     this.initPopper();
-  },
-};
+  }
+}
 </script>

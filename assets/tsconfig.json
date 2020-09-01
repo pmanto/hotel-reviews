@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-      "outDir": "./assets/vue-2/built/",
+      "outDir": "./vue-2/built/",
       "sourceMap": true,
       "strict": true,
       "module": "es2015",
@@ -11,6 +11,9 @@
       "experimentalDecorators": true
   },
   "include": [
-      "./assets/vue-2/**/*"
-  ]
+    "./vue-2/**/*"
+  ],
+  "files": [
+    "shims.d.ts"
+  ],
 }

@@ -5,7 +5,7 @@
         <legend class="filter__title">Filter</legend>
         <div class="form__inputs">
           <SelectField
-            :choices="hotelList"
+            :choices="hotelListComp"
             label="SELECT HOTEL"
             id="form_hotel_id"
             :onChange="updateHotelId"
@@ -17,59 +17,60 @@
     </form>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
 import SelectField from "./FormType/SelectField";
 import DatePickerField from "./FormType/DatePickerField";
-import Vue from "vue";
+import { State, Action, Getter } from "vuex-class";
+import { HotelState, HotelDD } from "../store/hotel/types";
+import { ReviewState } from "../store/review/types";
 
-export default Vue.extend({
-  name: "FilterSection",
-  computed: {
-    hotelList() {
-      return this.$store.getters.hotelList;
-    },
-  },
-  data: function () {
-    return {
-      hotelId: 0,
-      fromDate: null,
-      toDate: null,
-    };
-  },
-  mounted: function () {
-    this.$store.dispatch("setHotelList");
-  },
-  methods: {
-    updateHotelId: function (value) {
-      this.hotelId = value;
-      this.fetchData();
-    },
-    updateFromDate: function (value) {
-      this.fromDate = value.target.value;
-      this.fetchData();
-    },
-    updateToDate(value) {
-      this.toDate = value.target.value;
-      this.fetchData();
-    },
-    fetchData() {
-      if (
-        this.hotelId != 0 &&
-        this.fromDate &&
-        this.toDate &&
-        new Date(this.fromDate) <= new Date(this.toDate)
-      ) {
-        this.$store.dispatch("setReviewOvertimeList", {
-          hotelId: this.hotelId,
-          fromDate: this.fromDate,
-          toDate: this.toDate,
-        });
-      }
-    },
-  },
+@Component({
   components: {
     SelectField,
     DatePickerField,
   },
-});
+})
+export default class FilterSection extends Vue {
+  @State("hotel") hotel!: HotelState;
+  @State("review") review!: ReviewState;
+  @Action("fetchHotelData", { namespace: "hotel" }) fetchHotelData: any;
+  @Action("fetchReviewData", { namespace: "review" }) fetchReviewData: any;
+  @Getter("hotelList", { namespace: "hotel" }) hotelList!: Array<HotelDD>;
+  private hotelId: string = "0";
+  private fromDate?: string;
+  private toDate?: string;
+  get hotelListComp(): Array<HotelDD> {
+    return this.hotelList;
+  }
+  public updateHotelId(value: string): void {
+    this.hotelId = value;
+    this.fetchData();
+  }
+  public updateFromDate(event: any): void {
+    this.fromDate = event.target._value;
+    this.fetchData();
+  }
+  public updateToDate(event: any): void {
+    this.toDate = event.target._value;
+    this.fetchData();
+  }
+  public fetchData(): void {
+    if (
+      this.hotelId != "0" &&
+      this.fromDate &&
+      this.toDate &&
+      new Date(this.fromDate) <= new Date(this.toDate)
+    ) {
+      this.fetchReviewData({
+        hotelId: this.hotelId,
+        fromDate: this.fromDate,
+        toDate: this.toDate,
+      });
+    }
+  }
+  mounted() {
+    this.fetchHotelData();
+  }
+}
 </script>

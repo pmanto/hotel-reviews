@@ -1,54 +1,55 @@
 <template>
   <LineChart v-if="load" :values="scores" :xLabels="xLabels" :yLabels="yLabels" />
 </template>
-<script>
+<script lang="ts">
 import LineChart from "./LineChart";
-export default {
-  name: "ReviewChart",
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { ReviewOvertime, ReviewCollection } from "../../store/review/types";
+import { State, Action, Getter } from "vuex-class";
+
+@Component({
   components: {
     LineChart,
   },
-  data: function () {
-    return {
-      scores: [],
-      xLabels: [],
-      yLabels: 5,
-      load: false,
-    };
-  },
-  computed: {
-    reviewsOvertime() {
-      return this.$store.getters.reviewOvertimeList;
-    },
-  },
-  watch: {
-    reviewsOvertime: function () {
-      this.updateValues();
-    },
-  },
-  methods: {
-    updateValues: function () {
-      if (this.reviewsOvertime.length > 0) {
-        this.scores = [];
-        this.xLabels = [];
-        var period = null;
-        this.reviewsOvertime.forEach((element) => {
-          var score = {
-            value: element.averageScore,
-            reviewCount: element.reviewCount,
-          };
+})
+export default class ReviewChart extends Vue {
+  @Getter("reviewCollection", { namespace: "review" })
+  reviewCollection!: ReviewCollection;
+  private scores: Array<object> = [];
+  private xLabels: Array<string> = [];
+  private yLabels: number = 5;
+  private load: boolean = false;
 
-          this.scores.push(score);
-          if (!period || period !== element.period) {
-            period = element.period;
-            this.xLabels.push(element.period);
-          } else {
-            this.xLabels.push("");
-          }
-        });
-        this.load = true;
-      }
-    },
-  },
-};
+  get reviewsOvertime(): Array<ReviewOvertime> {
+    return this.reviewCollection.reviewOverviews;
+  }
+  @Watch("reviewsOvertime", {
+    immediate: true,
+  })
+  reviewsOvertimeChanged() {
+    this.updateValues();
+  }
+  public updateValues(): void {
+    if (this.reviewsOvertime.length > 0) {
+      this.scores = [];
+      this.xLabels = [];
+      var period: string = "";
+      this.reviewsOvertime.forEach((element) => {
+        var score = {
+          value: element.averageScore,
+          reviewCount: element.reviewCount,
+        };
+
+        this.scores.push(score);
+        if (period == "" || period !== element.period) {
+          period = element.period;
+          this.xLabels.push(element.period);
+        } else {
+          this.xLabels.push("");
+        }
+      });
+      this.load = true;
+    }
+  }
+}
 </script>
