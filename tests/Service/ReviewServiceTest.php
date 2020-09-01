@@ -124,16 +124,4 @@ class ReviewServiceTest extends TestCase
         $this->assertFalse($result->valid);
         $this->assertEquals('From date is bigger than to date', $result->errorMessage);
     }
-
-    /**
-     * test getOvertime with valid args
-     * should return ReviewOvertimeCollection with valid prop
-     */
-    public function testGetOvertimeWithValidArgsSmallerThan89()
-    {
-        $result = $this->reviewService->getOvertime(1, '2019-01-01', '2019-02-15');
-        $this->assertInstanceOf(ReviewOvertimeCollection::class, $result);
-        $this->assertTrue($result->valid);
-        $this->assertEquals('From date is bigger than to date', $result->errorMessage);
-    }
 }
