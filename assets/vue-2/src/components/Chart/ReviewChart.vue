@@ -2,7 +2,7 @@
   <LineChart v-if="load" :values="scores" :xLabels="xLabels" :yLabels="yLabels" />
 </template>
 <script lang="ts">
-import LineChart from "./LineChart";
+import LineChart from "./LineChart.vue";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { ReviewOvertime, ReviewCollection } from "../../store/review/types";
 import { State, Action, Getter } from "vuex-class";

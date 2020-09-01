@@ -7,8 +7,8 @@
 </template>
 
 <script lang="ts">
-import FilterSection from "../components/FilterSection";
-import ReviewChart from "../components/Chart/ReviewChart";
+import FilterSection from "../components/FilterSection.vue";
+import ReviewChart from "../components/Chart/ReviewChart.vue";
 import { Component, Vue } from "vue-property-decorator";
 @Component({
   components: {

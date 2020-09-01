@@ -25,7 +25,7 @@
 import Popper from "popper.js";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import TrendChart from "vue-trend-chart";
-@Component({components:{TrendChart}})
+@Component({ components: { TrendChart } })
 export default class LineChart extends Vue {
   @Prop(Array) readonly values!: Array<object>;
   @Prop(Array) readonly xLabels!: Array<string>;
@@ -36,7 +36,7 @@ export default class LineChart extends Vue {
     verticalLinesNumber: 1,
     horizontalLinesNumber: 1,
   };
-  private tooltipData!: object;
+  private tooltipData: any = null;
   private popper?: Popper = undefined;
   private popperIsActive: boolean = false;
   get datasets(): Array<object> {
@@ -55,10 +55,11 @@ export default class LineChart extends Vue {
     };
   }
   public initPopper(): void {
+    console.log("init popper");
     const chart = document.querySelector(".line-chart");
     if (chart) {
       const ref = chart.querySelector(".active-line");
-      const tooltip:any = this.$refs.tooltip;
+      const tooltip: any = this.$refs.tooltip;
       if (ref) {
         this.popper = new Popper(ref, tooltip, {
           placement: "right",
@@ -71,12 +72,15 @@ export default class LineChart extends Vue {
         });
       }
     }
+    
+          console.log(this.popper);
   }
   public onMouseMove(params: object): void {
     this.popperIsActive = !!params;
     if (this.popper !== undefined) {
       this.popper.scheduleUpdate();
     }
+
     this.tooltipData = params || null;
   }
   mounted() {

@@ -23,12 +23,15 @@ class GenericService
      * add days to a date
      * @param DateTime $dateTime        datetime object
      * @param int $days                 days
-     * @return DateTime                 
+     * @return DateTime|null                 
      */
     function addDays(DateTime $dateTime, int $days)
     {
-        $dateTimeClone = clone $dateTime;
-        return $dateTimeClone->add(new DateInterval('P' . $days . 'D'));
+        if ($days > 0) {
+            $dateTimeClone = clone $dateTime;
+            return $dateTimeClone->add(new DateInterval('P' . $days . 'D'));
+        }
+        return null;
     }
 
     /**
@@ -45,7 +48,7 @@ class GenericService
     }
 
     /**
-     * get date from month
+     * get date from month formatted instead of 2020-1 return 2020-01
      * @param int $year                 year
      * @param int $month                month of the year
      * @return string                   month year formatted

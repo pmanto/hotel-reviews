@@ -19,8 +19,8 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import SelectField from "./FormType/SelectField";
-import DatePickerField from "./FormType/DatePickerField";
+import SelectField from "./FormType/SelectField.vue";
+import DatePickerField from "./FormType/DatePickerField.vue";
 import { State, Action, Getter } from "vuex-class";
 import { HotelState, HotelDD } from "../store/hotel/types";
 import { ReviewState } from "../store/review/types";

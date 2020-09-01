@@ -28,8 +28,8 @@ class ReviewService
         $this->reviewRepository = $reviewRepository;
         $this->genericService = $genericService;
         $this->limits = [
-            'DATE' => $container->getParameter('app.daily_limit'),
-            'WEEK' => $container->getParameter('app.weekly_limit'),
+            'DATE' => intval($container->getParameter('app.daily_limit')),
+            'WEEK' => intval($container->getParameter('app.weekly_limit')),
             'MONTH' => null
         ];
     }
@@ -58,23 +58,29 @@ class ReviewService
             return $reviewOvertimeColl;
         }
 
-        return $this->getAllGroupedReviews($hotelId, $fromDateString, $toDateString);
+        $fromDate = new DateTime($fromDateString.' 00:00');
+        $toDate =  new DateTime($toDateString.' 00:00');
+        if ($fromDate > $toDate) {
+            $reviewOvertimeColl->valid = false;
+            $reviewOvertimeColl->errorMessage = "From date is bigger than to date";
+            return $reviewOvertimeColl;
+        }
+
+        return $this->getAllGroupedReviews($hotelId, $fromDate, $toDate);
     }
 
     /**
      * get all grouped reviews
-     * @param int $hotelId                  hotel id
-     * @param stirng $fromDateString        from date string
-     * @param string $toDateString          to date string
+     * @param int $hotelId                      hotel id
+     * @param DateTime $fromDateString        from date string
+     * @param DateTime $toDateString          to date string
      * @return array
      */
     private function getAllGroupedReviews(
-        $hotelId,
-        $fromDateString,
-        $toDateString
+        int $hotelId,
+        DateTime $fromDate,
+        DateTime $toDate
     ) {
-        $fromDate = DateTime::createFromFormat('Y-m-d', $fromDateString);
-        $toDate =  DateTime::createFromFormat('Y-m-d', $toDateString);
         $reviews = new ReviewOvertimeCollection();
         $break = false;
         $toLimit = null;
@@ -124,7 +130,7 @@ class ReviewService
             $reviewOvertimeOutput->averageScore = round($values['sumScore'] / $values['reviewCount'], 1);
             $reviewOvertimeOutput->reviewCount = $values['reviewCount'];
         }
-        
+
         $reviewOvertimeOutput->dateGroup = isset($values['datePeriod']) ?
             $values['datePeriod'] : (isset($values['weekPeriod']) ?
                 $values['weekPeriod'] : (isset($values['monthPeriod']) ?

@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Dto\DropDownOutput;
 use App\Entity\Hotel;
 use App\Repository\HotelRepository;
-use DateTime;
 
 class HotelService
 {
