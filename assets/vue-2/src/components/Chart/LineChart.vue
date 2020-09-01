@@ -24,8 +24,7 @@
 <script lang="ts">
 import Popper from "popper.js";
 import { Component, Prop, Vue } from "vue-property-decorator";
-const TrendChart = require("vue-trend-chart");
-Vue.use(TrendChart);
+import TrendChart from "vue-trend-chart";
 @Component({components:{TrendChart}})
 export default class LineChart extends Vue {
   @Prop(Array) readonly values!: Array<object>;
