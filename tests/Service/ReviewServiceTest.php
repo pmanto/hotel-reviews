@@ -4,7 +4,6 @@ namespace App\Tests\Service;
 
 use App\Dto\ReviewOvertimeCollection;
 use App\Repository\ReviewRepository;
-use App\Service\GenericService;
 use App\Service\ReviewService;
 use DateTime;
 use PHPUnit\Framework\TestCase;
@@ -62,29 +61,13 @@ class ReviewServiceTest extends TestCase
                 [1, $fromDateByMonth, $limitDateByMonth, 'MONTH', $byMonth],
                 [1, $fromDateByWeek, $smallToDate, 'WEEK', $byWeekSmall]
             ]);
-        $genericService = $this->createMock(GenericService::class);
-        $genericService->expects($this->any())->method('validateDate')
-            ->willReturnMap([
-                ['2021-13-15', 'Y-m-d', false],
-                ['2019-01-01', 'Y-m-d', true],
-                ['2020-01-01', 'Y-m-d', true],
-                ['2019-02-15', 'Y-m-d', true],
-            ]);
-
-        $genericService->expects($this->any())->method('addDays')
-            ->willReturnMap([
-                [$fromDateByDays, 29, $limitDateByDays],
-                [$limitDateByDays, 1, $fromDateByWeek],
-                [$fromDateByDays, 89, $limitDateByWeek],
-                [$limitDateByWeek, 1, $fromDateByMonth],
-            ]);
+        
         $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())->method('getParameter')
             ->willReturnMap([['app.daily_limit', '29'], ['app.daily_limit', '89']]);
 
         $this->reviewService = new ReviewService(
             $reviewRepository,
-            $genericService,
             $container
         );
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Helper;
 
 use DateInterval;
 use DateTime;
 
-class GenericService
+class DateTimeHelper
 {
     /**
      * validate string date format
@@ -13,7 +13,7 @@ class GenericService
      * @param string $format    date format
      * @return bool             true if the date is valid
      */
-    function validateDate($date, $format = 'Y-m-d')
+    public static function validateDate($date, $format = 'Y-m-d')
     {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
@@ -25,7 +25,7 @@ class GenericService
      * @param int $days                 days
      * @return DateTime|null                 
      */
-    function addDays(DateTime $dateTime, int $days)
+    public static function addDays(DateTime $dateTime, int $days)
     {
         if ($days > 0) {
             $dateTimeClone = clone $dateTime;
@@ -40,7 +40,7 @@ class GenericService
      * @param int $week             week of the year
      * @return string               month year fromatted
      */
-    function getDateFromWeek(int $year, int $week)
+    public static function getDateFromWeek(int $year, int $week)
     {
         $weekStart = new DateTime();
         $weekStart->setISODate($year, $week);
@@ -53,7 +53,7 @@ class GenericService
      * @param int $month                month of the year
      * @return string                   month year formatted
      */
-    function getDateFromMonth(int $year, int $month)
+    public static function getDateFromMonth(int $year, int $month)
     {
         $monthStart = new DateTime();
         return $monthStart->setDate($year, $month, 1)->format('Y-m');

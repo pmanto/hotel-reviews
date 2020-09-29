@@ -13,6 +13,7 @@ Create mysql database <br>
 Run <code>composer install</code> and fill in all the needed parameters<br>
 Run <code>php/bin console:doctrine:migrate</code><br>
 Run <code>npm install</code><br>
+Run <code>npm run build</code>
 Run <code>symfony serve</code><br>
 And open your localhost
 

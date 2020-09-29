@@ -5,28 +5,25 @@ namespace App\Service;
 use App\Dto\ReviewOvertimeCollection;
 use App\Dto\ReviewOvertimeOutput;
 use App\Repository\ReviewRepository;
+use App\Service\Helper\DateTimeHelper;
 use DateTime;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ReviewService
 {
     private $reviewRepository;
-    private $genericService;
     private $limits;
 
     /**
      * construct
      * @param ReviewRepository $reviewRepository        review repository
-     * @param GenericService $genericService            generic service
      * @param ContainerInterface $container             container
      */
     public function __construct(
         ReviewRepository $reviewRepository,
-        GenericService $genericService,
         ContainerInterface $container
     ) {
         $this->reviewRepository = $reviewRepository;
-        $this->genericService = $genericService;
         $this->limits = [
             'DATE' => intval($container->getParameter('app.daily_limit')),
             'WEEK' => intval($container->getParameter('app.weekly_limit')),
@@ -43,7 +40,7 @@ class ReviewService
      */
     public function getOvertime($hotelId, $fromDateString, $toDateString)
     {
-        $fromDateValid = $this->genericService->validateDate($fromDateString);
+        $fromDateValid = DateTimeHelper::validateDate($fromDateString);
         $reviewOvertimeColl = new ReviewOvertimeCollection();
         if (!$fromDateValid) {
             $reviewOvertimeColl->valid = false;
@@ -51,7 +48,7 @@ class ReviewService
             return $reviewOvertimeColl;
         }
 
-        $toDateValid = $this->genericService->validateDate($toDateString);
+        $toDateValid = DateTimeHelper::validateDate($toDateString);
         if (!$toDateValid) {
             $reviewOvertimeColl->valid = false;
             $reviewOvertimeColl->errorMessage = "The to date is not valid";
@@ -87,11 +84,11 @@ class ReviewService
         $fromLimit = $fromDate;
         foreach ($this->limits as $groupBy => $days) {
             if ($toLimit) {
-                $fromLimit = $this->genericService->addDays($toLimit, 1);
+                $fromLimit = DateTimeHelper::addDays($toLimit, 1);
             }
 
             if ($days) {
-                $toLimit = $this->genericService->addDays($fromDate, $days);
+                $toLimit = DateTimeHelper::addDays($fromDate, $days);
                 if ($toLimit > $toDate) {
                     $toLimit = $toDate;
                     $break = true;
@@ -138,8 +135,8 @@ class ReviewService
 
         $reviewOvertimeOutput->period =  isset($values['datePeriod']) ?
             (new DateTime($values['datePeriod']))->format('Y-m') : (isset($values['weekPeriod']) ?
-                $this->genericService->getDateFromWeek($values['yearPeriod'], $values['weekPeriod']) :
-                $this->genericService->getDateFromMonth($values['yearPeriod'], $values['monthPeriod']));
+                DateTimeHelper::getDateFromWeek($values['yearPeriod'], $values['weekPeriod']) :
+                DateTimeHelper::getDateFromMonth($values['yearPeriod'], $values['monthPeriod']));
     }
 
     /**
